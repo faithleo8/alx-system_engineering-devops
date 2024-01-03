@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# install nginx
+sudo apt-get -y update
+sudo apt-get -y install nginx
+echo 'Hello World!' | sudo tee /var/www/html/index.nginx-debian.html
+
+sudo chown -R "$USER":"$USER" /etc/nginx/sites-available/
+if  cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default_backup
+then
+  echo "Backup created"
+else
+  echo "Backup not created"
+  exit 1
+fi
+echo "server {
+              listen 80 default_server;
+              listen [::]:80 default_server;
+              root /var/www/html;
+              index index.html index.htm index.nginx-debian.html;
+              server_name _;
+              location /redirect_me {
+                  return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;
+              }
+      	}" > /etc/nginx/sites-available/default
+
+sudo service nginx restart
